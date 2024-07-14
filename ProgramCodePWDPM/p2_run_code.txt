@@ -1,0 +1,196 @@
+###########################################################
+##      Simple Run                                       ##
+###########################################################
+library(devtools)
+load_all("C:/Users/peng11/Desktop/svspm")
+y=simdata(500,3,27,"wdpmp",F)
+ptm <- proc.time()
+result=fitdata(y,p=3,Q=27,"wdpmp",Nm=50000,Nb=10000,trace=T)    #Nb is better to be at least 10000#
+proc.time() - ptm
+###########################################################
+ 
+
+   
+
+
+###########################################################
+##      Simulation Study Example                         ##
+###########################################################
+library(foreach)
+library(doParallel)
+cl <- makeCluster(38)
+registerDoParallel(cl)
+ptm <- proc.time()
+result1<- foreach(i=1:200, .combine='c') %dopar% {
+library(devtools)
+load_all("C:/Users/peng11/Desktop/svspm")
+y=simdata(500,3,27,"wdpmh",F)
+result1=fitdata(y,3,27,"wdpmp",50000,10000,trace=F)
+result2=fitdata(y,3,27,"ewdpm",50000,10000,trace=F)
+result3=fitdata(y,3,27,"wdpmh",50000,10000,trace=F)
+c(result1,result2,result3)
+}
+proc.time() - ptm
+###########################################################
+
+
+
+
+###########################################################
+##      Empirical Study  Example                         ##
+###########################################################
+temp=read.table("C:/Users/peng11/Desktop/dax.txt")
+temp=as.matrix(temp)
+n=length(temp)
+y=100*log(temp[2:n,1]/temp[1:(n-1),1])
+rm(list=c("n","temp"))
+Nm=100000
+Nb=50000
+library(foreach)
+library(doParallel)
+cl <- makeCluster(27)
+registerDoParallel(cl)
+ptm <- proc.time()
+result<- foreach(i=1:26, .combine='c') %dopar% {
+library(devtools)
+load_all("C:/Users/peng11/Desktop/svspm")
+if(i==1){
+temp=fitdata(y,3,27,"wdpmp",Nm=Nm,Nb=Nb,T)
+}
+if(i==2){
+temp=fitdata(y,4,40,"wdpmp",Nm=Nm,Nb=Nb,T)
+}
+if(i==3){
+temp=fitdata(y,4,50,"wdpmp",Nm=Nm,Nb=Nb,T)
+}
+if(i==4){
+temp=fitdata(y,4,81,"wdpmp",Nm=Nm,Nb=Nb,T)
+}
+if(i==5){
+temp=fitdata(y,5,40,"wdpmp",Nm=Nm,Nb=Nb,T)
+}
+if(i==6){
+temp=fitdata(y,5,50,"wdpmp",Nm=Nm,Nb=Nb,T)
+}
+if(i==7){
+temp=fitdata(y,5,80,"wdpmp",Nm=Nm,Nb=Nb,T)
+}
+if(i==8){
+temp=fitdata(y,5,100,"wdpmp",Nm=Nm,Nb=Nb,T)
+}
+if(i==9){
+temp=fitdata(y,3,27,"ewdpm",Nm=Nm,Nb=Nb,T)
+}
+if(i==10){
+temp=fitdata(y,4,40,"ewdpm",Nm=Nm,Nb=Nb,T)
+}
+if(i==11){
+temp=fitdata(y,4,50,"ewdpm",Nm=Nm,Nb=Nb,T)
+}
+if(i==12){
+temp=fitdata(y,4,81,"ewdpm",Nm=Nm,Nb=Nb,T)
+}
+if(i==13){
+temp=fitdata(y,5,40,"ewdpm",Nm=Nm,Nb=Nb,T)
+}
+if(i==14){
+temp=fitdata(y,5,50,"ewdpm",Nm=Nm,Nb=Nb,T)
+}
+if(i==15){
+temp=fitdata(y,5,80,"ewdpm",Nm=Nm,Nb=Nb,T)
+}
+if(i==16){
+temp=fitdata(y,5,100,"ewdpm",Nm=Nm,Nb=Nb,T)
+}
+if(i==17){
+temp=fitdata(y,3,27,"wdpmh",Nm=Nm,Nb=Nb,T)
+}
+if(i==18){
+temp=fitdata(y,4,40,"wdpmh",Nm=Nm,Nb=Nb,T)
+}
+if(i==19){
+temp=fitdata(y,4,50,"wdpmh",Nm=Nm,Nb=Nb,T)
+}
+if(i==20){
+temp=fitdata(y,4,81,"wdpmh",Nm=Nm,Nb=Nb,T)
+}
+if(i==21){
+temp=fitdata(y,5,40,"wdpmh",Nm=Nm,Nb=Nb,T)
+}
+if(i==22){
+temp=fitdata(y,5,50,"wdpmh",Nm=Nm,Nb=Nb,T)
+}
+if(i==23){
+temp=fitdata(y,5,80,"wdpmh",Nm=Nm,Nb=Nb,T)
+}
+if(i==24){
+temp=fitdata(y,5,100,"wdpmh",Nm=Nm,Nb=Nb,T)
+}
+if(i==25){
+temp=fitdata(y,model="pm",Nm=Nm,Nb=Nb,trace=T)
+}
+if(i==26){
+temp=fitdata(y,model="dpm",Nm=Nm,Nb=Nb,trace=T)
+}
+c(temp)
+}
+proc.time() - ptm
+###########################################################
+
+
+
+
+###########################################################
+##  Empirical Study  Example  2  (100 individual stocks) ##
+###########################################################
+temp=read.table("C:/Users/peng11/Desktop/100.txt")
+temp=as.matrix(temp)
+Nm=50000
+Nb=10000
+library(foreach)
+library(doParallel)
+cl <- makeCluster(38)
+registerDoParallel(cl)
+ptm <- proc.time()
+result<- foreach(i=1:100, .combine='c') %dopar% {
+library(devtools)
+load_all("C:/Users/peng11/Desktop/svspm")
+y=as.vector(temp[,i])
+temp1=fitdata(y,model="pm",Nm=Nm,Nb=Nb,F)
+temp2=fitdata(y,model="dpm",Nm=Nm,Nb=Nb,F)
+temp3=fitdata(y,3,27,"wdpmp",Nm=Nm,Nb=Nb,F)
+c(temp1,temp2,temp3)
+}
+proc.time() - ptm
+###########################################################
+
+
+
+
+
+###########################################################
+##      Cluster Visualization   Example                  ##
+###########################################################
+library(devtools)
+load_all("C:/Users/peng11/Desktop/svspm")
+y=simdata(500,3,27,"wdpmp",F)
+Nm=50000
+Nb=10000
+ptm <- proc.time()
+result=fitdata(y,p=3,Q=27,"wdpmh",Nm=Nm,Nb=Nb,trace=T)    #Nb is better to be at least 10000#
+proc.time() - ptm
+ptm <- proc.time()
+mumat=result$mumat
+xmin=-12   #we may need to modify the min and max in order to make it look better
+xmax=8
+ymax=1.5
+a1=Nb/10
+a2=Nm/10
+plot(density(mumat[a1:a2,1]),ylim=c(0,ymax),xlim=c(xmin,xmax))
+for(i in 2:dim(mumat)[2]){
+if(min(mumat[,i])>-15){
+lines(density(mumat[a1:a2,i]),ylim=c(0,ymax),xlim=c(xmin,xmax))
+}
+}
+proc.time() - ptm
+###########################################################
